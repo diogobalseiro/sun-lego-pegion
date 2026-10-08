@@ -1,32 +1,32 @@
 /**
- * ELEVATOR TOKEN CHALLENGE - Modern Fun Design
- * Vibrant, kid-friendly colors
- * Dark mode support
- * Fun central button
+ * ELEVATOR TOKEN CHALLENGE - Stars & Galaxy Theme
+ * Cosmic, space-inspired design for kids
+ * Dark mode with twinkling stars
  */
 
 :root {
     /* ===== DEFAULT THEME VARIABLES ===== */
     --theme: 'light';
     
-    /* Colors */
-    --primary: #3B82F6;
-    --primary-light: #60A5FA;
-    --primary-dark: #2563EB;
-    --secondary: #10B981;
-    --accent: #F59E0B;
-    --accent-light: #FCD34D;
+    /* Space Color Palette */
+    --cosmic-blue: #1E3A8A;
+    --nebula-purple: #4F46E5;
+    --cosmic-teal: #06B6D4;
+    --star-gold: #F59E0B;
+    --galaxy-pink: #8B5CF6;
+    --supernova: #FFD700;
+    --meteor-red: #EF4444;
+    --comet-green: #22C55E;
     
     /* Semantic */
-    --success: #22C55E;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --estrela: #FFD700;
-    --streak-fire: #F97316;
+    --primary: #4F46E5;
+    --primary-light: #6366F1;
+    --secondary: #06B6D4;
+    --accent: #F59E0B;
     
-    /* Neutral Light */
-    --bg-primary: #F0F9FF;
-    --bg-secondary: #E0F2FE;
+    /* Neutrals Light */
+    --bg-space: #E0F2FE;
+    --bg-galaxy: #B3E5FC;
     --bg-card: #FFFFFF;
     --text-primary: #1E293B;
     --text-secondary: #64748B;
@@ -37,9 +37,10 @@
     --shadow: 0 4px 12px rgba(0,0,0,0.1);
     --shadow-lg: 0 8px 20px rgba(0,0,0,0.15);
     --shadow-xl: 0 12px 30px rgba(0,0,0,0.2);
-    --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.4);
+    --shadow-cosmic: 0 0 30px rgba(79, 70, 229, 0.4);
     --shadow-button: 0 8px 0 #1E40AF;
     --shadow-button-pressed: 0 2px 0 #1E40AF;
+    --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.5);
     
     /* Typography */
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -70,17 +71,19 @@
 
 /* ===== DARK MODE ===== */
 [data-theme="dark"] {
-    --bg-primary: #0F172A;
-    --bg-secondary: #1E293B;
+    --bg-space: #0B1120;
+    --bg-galaxy: #0F172A;
     --bg-card: #1E293B;
     --text-primary: #F1F5F9;
     --text-secondary: #94A3B8;
     --border: #334155;
-    --shadow: 0 4px 12px rgba(0,0,0,0.3);
-    --shadow-lg: 0 8px 20px rgba(0,0,0,0.4);
-    --shadow-xl: 0 12px 30px rgba(0,0,0,0.5);
+    --shadow: 0 4px 12px rgba(0,0,0,0.5);
+    --shadow-lg: 0 8px 20px rgba(0,0,0,0.6);
+    --shadow-xl: 0 12px 30px rgba(0,0,0,0.7);
+    --shadow-cosmic: 0 0 30px rgba(79, 70, 229, 0.6);
     --shadow-button: 0 8px 0 #1E3A8A;
     --shadow-button-pressed: 0 2px 0 #1E3A8A;
+    --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.7);
 }
 
 /* ===========================================
@@ -95,7 +98,7 @@
 html, body {
     height: 100%;
     font-family: var(--font-sans);
-    background: var(--bg-primary);
+    background: var(--bg-space);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -104,6 +107,19 @@ html, body {
     -webkit-user-select: none;
     touch-action: manipulation;
     transition: background var(--transition-slow), color var(--transition-slow);
+    
+    /* Cosmic background pattern */
+    background-image: 
+        radial-gradient(ellipse at 20% 30%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(140, 92, 246, 0.1) 0%, transparent 50%);
+    background-size: 400px 400px, 300px 300px, 500px 500px;
+    animation: cosmicDrift 60s linear infinite;
+}
+
+@keyframes cosmicDrift {
+    from { background-position: 0% 0%, 0% 0%, 0% 0%; }
+    to { background-position: 100% 100%, 100% 100%, 100% 100%; }
 }
 
 @supports (padding: max(0px)) {
@@ -115,10 +131,29 @@ html, body {
     padding: var(--space-md);
     max-width: 800px;
     margin: 0 auto;
+    position: relative;
+}
+
+/* ===== COSMIC PARTICLES ===== */
+.cosmic-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: twinkle 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
 }
 
 /* ===========================================
-   THEME TOGGLE (Top-right corner)
+   THEME TOGGLE
    =========================================== */
 #theme-toggle {
     position: fixed;
@@ -134,14 +169,14 @@ html, body {
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     z-index: 100;
     transition: var(--transition);
 }
 
 #theme-toggle:hover {
     transform: scale(1.1);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
 }
 
 #theme-toggle:active {
@@ -154,6 +189,7 @@ html, body {
 #kid-zone {
     text-align: center;
     animation: fadeInUp 0.6s ease;
+    position: relative;
 }
 
 @keyframes fadeInUp {
@@ -170,12 +206,18 @@ header h1 {
     font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 2.75rem);
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-teal), var(--galaxy-pink));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: -0.02em;
     margin-bottom: var(--space-xs);
+    animation: cosmicGlow 3s ease-in-out infinite;
+}
+
+@keyframes cosmicGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(79, 70, 229, 0.3); }
+    50% { text-shadow: 0 0 40px rgba(79, 70, 229, 0.6), 0 0 20px rgba(6, 182, 212, 0.4); }
 }
 
 #greeting {
@@ -188,17 +230,17 @@ header h1 {
     font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
+    color: var(--cosmic-teal);
+    background: rgba(6, 182, 212, 0.15);
     padding: 0.2rem 0.5rem;
     border-radius: var(--radius-full);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(6, 182, 212, 0.3);
     vertical-align: middle;
     margin-left: 0.5rem;
 }
 
 /* ===========================================
-   FUN CENTRAL BUTTON (Star Shaped)
+   COSMIC CENTRAL BUTTON (Shooting Star)
    =========================================== */
 #punch-section {
     margin: var(--space-xl) 0;
@@ -207,7 +249,7 @@ header h1 {
 
 #punch-btn {
     font-family: var(--font-display);
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-teal), var(--galaxy-pink));
     color: white;
     border: none;
     border-radius: var(--radius-3xl);
@@ -216,36 +258,59 @@ header h1 {
     font-size: clamp(1.25rem, 3.5vw, 1.75rem);
     font-weight: 800;
     cursor: pointer;
-    box-shadow: var(--shadow-lg), var(--shadow-button);
+    box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic);
     transition: all var(--transition-fast);
     position: relative;
     overflow: hidden;
     min-width: 88px;
     min-height: 88px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     
-    /* Fun star shape using clip-path */
+    /* Cosmic star shape */
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    
+    /* Inner glow */
+    background-blend-mode: overlay;
 }
 
 #punch-btn::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-    animation: starShine 3s ease-in-out infinite;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 30%),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,0.2) 0%, transparent 40%);
+    animation: cosmicShine 4s ease-in-out infinite;
     pointer-events: none;
 }
 
-@keyframes starShine {
-    0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
-    50% { opacity: 1; transform: scale(1.1) rotate(10deg); }
+@keyframes cosmicShine {
+    0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.1) rotate(180deg); }
+}
+
+#punch-btn::after {
+    content: '✨';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    opacity: 0;
+    animation: starTwinkle 2s ease-in-out infinite;
+    pointer-events: none;
+    color: var(--supernova);
+    text-shadow: 0 0 20px var(--supernova);
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(360deg); }
 }
 
 #punch-btn:active {
-    transform: translateY(4px);
-    box-shadow: var(--shadow-button-pressed);
-    animation: none;
+    transform: translateY(4px) scale(0.95);
+    box-shadow: var(--shadow-button-pressed), var(--shadow-cosmic);
 }
 
 #punch-btn:hover {
@@ -254,34 +319,37 @@ header h1 {
 }
 
 #punch-btn.success {
-    animation: successPulse 0.5s ease, sparkleBurst 1s ease;
+    animation: successPulse 0.5s ease, cosmicBurst 1s ease;
 }
 
 @keyframes successPulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+    50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
 
-@keyframes sparkleBurst {
-    0% { box-shadow: var(--shadow-lg), var(--shadow-button); }
-    50% { box-shadow: 0 0 50px var(--primary), 0 0 30px var(--secondary); }
-    100% { box-shadow: var(--shadow-lg), var(--shadow-button); }
+@keyframes cosmicBurst {
+    0% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); }
+    50% { 
+        box-shadow: 0 0 60px var(--nebula-purple), 0 0 40px var(--cosmic-teal), 0 0 20px var(--galaxy-pink);
+        filter: brightness(1.2);
+    }
+    100% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); filter: brightness(1); }
 }
 
 #punch-text {
     position: relative;
     z-index: 2;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 #feedback {
     margin-top: var(--space-lg);
     font-size: clamp(1rem, 3vw, 1.4rem);
     font-weight: 700;
-    color: var(--success);
+    color: var(--comet-green);
     min-height: 1.5em;
     animation: feedbackPulse 0.3s ease;
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
 }
 
 @keyframes feedbackPulse {
@@ -291,11 +359,12 @@ header h1 {
 }
 
 #feedback.error {
-    color: var(--danger);
+    color: var(--meteor-red);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 /* ===========================================
-   STATS CARDS
+   STATS CARDS (Nebula Style)
    =========================================== */
 #stats {
     display: flex;
@@ -315,6 +384,11 @@ header h1 {
     border: 2px solid var(--border);
     position: relative;
     overflow: hidden;
+    
+    /* Nebula glow border */
+    background-image: 
+        radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.1) 0%, transparent 30%),
+        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
 }
 
 .stat-card::before {
@@ -324,12 +398,12 @@ header h1 {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: linear-gradient(90deg, var(--nebula-purple), var(--cosmic-teal), var(--galaxy-pink));
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(79, 70, 229, 0.2);
 }
 
 .stat-icon {
@@ -349,15 +423,15 @@ header h1 {
 .stat-value {
     font-size: clamp(1.75rem, 4vw, 2.25rem);
     font-weight: 800;
-    color: var(--primary);
+    color: var(--nebula-purple);
     font-family: var(--font-display);
     line-height: 1;
 }
 
 #estrela-counter .stat-icon {
-    color: var(--estrela);
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
-    animation: estrelaSpin 10s linear infinite;
+    color: var(--supernova);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+    animation: estrelaSpin 20s linear infinite;
 }
 
 @keyframes estrelaSpin {
@@ -366,12 +440,17 @@ header h1 {
 }
 
 #estrela-counter .stat-value {
-    color: var(--estrela);
+    color: var(--supernova);
+}
+
+#estrela-counter .stat-icon,
+#estrela-counter .stat-value {
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
 }
 
 #streak-counter .stat-icon {
-    color: var(--streak-fire);
-    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.5));
+    color: var(--galaxy-pink);
+    filter: drop-shadow(0 0 10px rgba(140, 92, 246, 0.7));
     animation: firePulse 2s ease-in-out infinite;
 }
 
@@ -381,11 +460,12 @@ header h1 {
 }
 
 #streak-counter .stat-value {
-    color: var(--streak-fire);
+    color: var(--galaxy-pink);
+    text-shadow: 0 0 10px rgba(140, 92, 246, 0.5);
 }
 
 /* ===========================================
-   REWARDS SHOP
+   REWARDS SHOP (Galaxy Cards)
    =========================================== */
 #rewards-shop {
     background: var(--bg-card);
@@ -394,10 +474,15 @@ header h1 {
     margin: var(--space-lg) 0;
     box-shadow: var(--shadow);
     border: 2px solid var(--border);
+    
+    /* Galaxy border effect */
+    background-image: 
+        radial-gradient(circle at 0% 100%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
 }
 
 #rewards-shop h2 {
-    color: var(--primary);
+    color: var(--cosmic-teal);
     margin-bottom: var(--space-lg);
     font-size: clamp(1.1rem, 3vw, 1.4rem);
     font-weight: 800;
@@ -413,7 +498,7 @@ header h1 {
     left: 0;
     width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: linear-gradient(90deg, var(--cosmic-teal), var(--galaxy-pink));
     border-radius: var(--radius-full);
 }
 
@@ -424,7 +509,7 @@ header h1 {
 }
 
 .reward-card {
-    background: var(--bg-secondary);
+    background: var(--bg-galaxy);
     border-radius: var(--radius-xl);
     padding: var(--space-lg);
     text-align: center;
@@ -437,27 +522,34 @@ header h1 {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    
+    /* Star field background */
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 80px 20px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 130px 50px, white, transparent),
+        radial-gradient(1px 1px at 160px 80px, rgba(255,255,255,0.5), transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
 }
 
 .reward-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: var(--transition-slow);
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+    opacity: 0;
+    transition: var(--transition);
 }
 
 .reward-card:hover::before {
-    left: 100%;
+    opacity: 1;
 }
 
 .reward-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: var(--primary);
-    box-shadow: var(--shadow-lg);
+    border-color: var(--cosmic-teal);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
 .reward-card:active {
@@ -482,15 +574,16 @@ header h1 {
 
 .reward-card .reward-cost {
     font-size: clamp(0.8rem, 2vw, 0.95rem);
-    color: var(--accent);
+    color: var(--star-gold);
     margin-bottom: var(--space-md);
     font-weight: 700;
     position: relative;
     z-index: 1;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
 }
 
 .reward-card .trade-btn {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-teal));
     color: white;
     border: none;
     border-radius: var(--radius-full);
@@ -502,12 +595,27 @@ header h1 {
     min-width: 100px;
     min-height: 44px;
     box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.reward-card .trade-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: var(--transition);
+}
+
+.reward-card .trade-btn:hover::before {
+    transform: translateX(100%);
 }
 
 .reward-card .trade-btn:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--galaxy-pink));
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), var(--shadow-cosmic);
 }
 
 .reward-card .trade-btn:active {
@@ -534,7 +642,7 @@ header h1 {
 }
 
 #history h2 {
-    color: var(--primary);
+    color: var(--cosmic-teal);
     margin-bottom: var(--space-lg);
     font-size: clamp(1.1rem, 3vw, 1.4rem);
     font-weight: 800;
@@ -557,7 +665,7 @@ header h1 {
 }
 
 #days-table th {
-    background: var(--bg-secondary);
+    background: var(--bg-galaxy);
     font-weight: 700;
     color: var(--text-secondary);
     font-size: 0.8rem;
@@ -566,18 +674,20 @@ header h1 {
 }
 
 #days-table tr:last-child td { border-bottom: none; }
-#days-table tr:nth-child(even) { background: var(--bg-secondary); }
+#days-table tr:nth-child(even) { background: var(--bg-galaxy); }
 
 .result-success {
-    color: var(--success);
+    color: var(--comet-green);
     font-weight: 700;
     font-family: var(--font-display);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
 }
 
 .result-fail {
-    color: var(--danger);
+    color: var(--meteor-red);
     font-weight: 700;
     font-family: var(--font-display);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
 }
 
 /* ===========================================
@@ -586,23 +696,33 @@ header h1 {
 #parent-zone {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     padding: var(--space-xl);
     overflow-y: auto;
     color: var(--bg-card);
     font-family: var(--font-sans);
     backdrop-filter: blur(8px);
+    
+    /* Cosmic particles in modal */
+    background-image: 
+        radial-gradient(2px 2px at 50px 50px, white, transparent),
+        radial-gradient(1px 1px at 200px 100px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(2px 2px at 350px 200px, white, transparent);
+    background-size: 400px 400px;
 }
 
 [data-theme="dark"] #parent-zone {
     color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
+    background-image: 
+        radial-gradient(2px 2px at 50px 50px, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 200px 100px, rgba(255,255,255,0.2), transparent);
 }
 
 #parent-zone h2 {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent);
+    color: var(--star-gold);
+    border-bottom: 2px solid var(--star-gold);
     padding-bottom: var(--space-sm);
     margin-bottom: var(--space-lg);
     font-size: 1.3rem;
@@ -614,7 +734,7 @@ header h1 {
     position: absolute;
     top: var(--space-lg);
     right: var(--space-lg);
-    background: var(--danger);
+    background: var(--meteor-red);
     color: white;
     border: none;
     border-radius: var(--radius-full);
@@ -626,10 +746,17 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: var(--shadow);
 }
 
-.close-btn:hover { background: #DC2626; }
-.close-btn:active { transform: scale(0.95); }
+.close-btn:hover { 
+    background: #DC2626;
+    transform: scale(1.1);
+}
+
+.close-btn:active { 
+    transform: scale(0.95);
+}
 
 .form-group {
     margin: var(--space-lg) 0;
@@ -663,8 +790,8 @@ header h1 {
 .form-group input[type="text"]:focus,
 .form-group input[type="number"]:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    border-color: var(--cosmic-teal);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
 }
 
 .form-group button,
@@ -682,22 +809,22 @@ button[id^="reset"] {
     min-width: 88px;
     min-height: 44px;
     font-family: var(--font-display);
+    box-shadow: var(--shadow);
 }
 
 button[id^="save"],
 button[id^="add"],
 button[id^="manual"] {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-teal));
     color: white;
-    box-shadow: var(--shadow);
 }
 
 button[id^="save"]:hover,
 button[id^="add"]:hover,
 button[id^="manual"]:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--galaxy-pink));
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), var(--shadow-cosmic);
 }
 
 button[id^="save"]:active,
@@ -708,7 +835,7 @@ button[id^="manual"]:active {
 }
 
 .danger-btn {
-    background: var(--danger);
+    background: var(--meteor-red);
     color: white;
 }
 
@@ -729,14 +856,14 @@ button[id^="manual"]:active {
     justify-content: space-between;
     align-items: center;
     padding: var(--space-md);
-    background: var(--bg-secondary);
+    background: var(--bg-galaxy);
     border-radius: var(--radius);
     margin: var(--space-sm) 0;
     border: 1px solid var(--border);
 }
 
 #reward-list-admin li button {
-    background: var(--danger);
+    background: var(--meteor-red);
     color: white;
     border: none;
     border-radius: var(--radius-sm);
@@ -785,6 +912,7 @@ button[id^="manual"]:active {
 
 .admin-hint:hover {
     opacity: 1;
+    transform: translateX(-50%) scale(1.05);
 }
 
 /* ===========================================
@@ -796,7 +924,7 @@ button[id^="manual"]:active {
    ESTRELA ANIMATION
    =========================================== */
 @keyframes estrelaFloat {
-    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)); }
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7)); }
     25% { transform: translate(-10px, -30px) rotate(45deg) scale(1.1); opacity: 0.9; }
     50% { transform: translate(-20px, -60px) rotate(90deg) scale(1.2); opacity: 0.8; }
     75% { transform: translate(-30px, -90px) rotate(135deg) scale(1.1); opacity: 0.6; }
@@ -806,23 +934,25 @@ button[id^="manual"]:active {
 .estrela-animation {
     position: absolute;
     font-size: clamp(1.25rem, 3vw, 1.75rem);
-    color: var(--estrela);
+    color: var(--supernova);
     animation: estrelaFloat 1.5s ease-out forwards;
     pointer-events: none;
     z-index: 1100;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
 }
 
 /* ===========================================
    RESPONSIVE
    =========================================== */
 @media (max-width: 600px) {
+    html, body { background-size: 200px 200px, 150px 150px, 250px 250px; }
     #app { padding: var(--space-sm); }
     header { margin-bottom: var(--space-lg); }
     #punch-btn { width: clamp(140px, 42vw, 180px); height: clamp(140px, 42vw, 180px); }
     #stats { gap: var(--space-md); }
     .stat-card { padding: var(--space-md); min-width: 45vw; }
     .rewards-grid { grid-template-columns: 1fr; gap: var(--space-md); }
-    .reward-card { min-height: 140px; }
+    .reward-card { min-height: 140px; background-size: 100px 100px; }
     #rewards-shop, #history { padding: var(--space-md); }
     #parent-zone { padding: var(--space-md); }
     .form-group { flex-direction: column; align-items: stretch; }
@@ -835,13 +965,13 @@ button[id^="manual"]:active {
 /* ===========================================
    SELECTION & FOCUS
    =========================================== */
-button:focus, input:focus { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
-::selection { background: var(--primary); color: white; }
+button:focus, input:focus { outline: none; box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3); }
+::selection { background: var(--nebula-purple); color: white; }
 
 /* ===========================================
    SCROLLBAR
    =========================================== */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+::-webkit-scrollbar-thumb { background: var(--cosmic-teal); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--nebula-purple); }

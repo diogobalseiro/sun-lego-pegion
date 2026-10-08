@@ -10,7 +10,7 @@
  * - Track consecutive day streak
  */
 
-const VERSION = '2.0.0';
+const VERSION = '3.0.0';
 const STATE_KEY = 'elevatorTokenState';
 const THEME_KEY = 'elevatorTokenTheme';
 
@@ -514,6 +514,34 @@ function setVersionBadge() {
     if (badge) badge.textContent = `v${VERSION}`;
 }
 
+// Create cosmic particles (stars) in background
+function createCosmicParticles() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'cosmic-particle';
+        
+        // Random position
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        // Random size (1-3px)
+        const size = Math.random() * 2 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random opacity
+        particle.style.opacity = Math.random() * 0.7 + 0.3;
+        
+        // Random animation delay
+        particle.style.animationDelay = `${Math.random() * 2}s`;
+        
+        app.appendChild(particle);
+    }
+}
+
 // Initialize theme toggle button
 function initThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
@@ -533,6 +561,7 @@ function initThemeToggle() {
 document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     setVersionBadge();
+    createCosmicParticles();
     init();
     initThemeToggle();
 });
