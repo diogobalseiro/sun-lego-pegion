@@ -198,7 +198,7 @@ header h1 {
 }
 
 /* ===========================================
-   FUN CENTRAL BUTTON (Sun/Star Shaped)
+   FUN CENTRAL BUTTON (Star Shaped)
    =========================================== */
 #punch-section {
     margin: var(--space-xl) 0;
@@ -207,7 +207,7 @@ header h1 {
 
 #punch-btn {
     font-family: var(--font-display);
-    background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     border: none;
     border-radius: var(--radius-3xl);
@@ -226,33 +226,20 @@ header h1 {
     
     /* Fun star shape using clip-path */
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    
-    /* Sparkle effect */
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 0.5px, transparent 0.5px),
-        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.8) 0.7px, transparent 0.7px),
-        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.8) 0.6px, transparent 0.6px);
-    background-size: 100px 100px, 80px 80px, 120px 120px;
-    animation: sparkle 3s linear infinite;
-}
-
-@keyframes sparkle {
-    from { background-position: 0% 0%, 0% 0%, 0% 0%; }
-    to { background-position: 100% 100%, 100% 100%, 100% 100%; }
 }
 
 #punch-btn::before {
-    content: '✨';
+    content: '';
     position: absolute;
-    font-size: 2rem;
-    opacity: 0;
-    animation: twinkle 2s ease-in-out infinite;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+    animation: starShine 3s ease-in-out infinite;
     pointer-events: none;
 }
 
-@keyframes twinkle {
-    0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+@keyframes starShine {
+    0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.1) rotate(10deg); }
 }
 
 #punch-btn:active {
