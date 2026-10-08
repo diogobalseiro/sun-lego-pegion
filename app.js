@@ -41,7 +41,7 @@ function loadState() {
         if (saved) {
             const parsed = JSON.parse(saved);
             state = { ...defaultState, ...parsed };
-            if (!state.rewards || state.rewards.length === 0) {
+            if (!state.rewards) {
                 state.rewards = [...defaultRewards];
             }
             if (!state.punchHistory) state.punchHistory = [];

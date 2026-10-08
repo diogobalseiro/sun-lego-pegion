@@ -697,6 +697,7 @@ header h1 {
     z-index: 1000;
     padding: var(--space-xl);
     overflow-y: auto;
+    overflow-x: hidden;
     color: var(--text-primary);
     font-family: var(--font-sans);
     backdrop-filter: blur(8px);
@@ -942,11 +943,15 @@ button[id^="manual"]:active {
     .rewards-grid { grid-template-columns: 1fr; gap: var(--space-md); }
     .reward-card { min-height: 140px; background-size: 100px 100px; }
     #rewards-shop, #history { padding: var(--space-md); }
-    #parent-zone { padding: var(--space-md); }
+    #parent-zone { 
+        padding: var(--space-md);
+        width: 100%;
+    }
     .form-group { flex-direction: column; align-items: stretch; }
     .form-group label { min-width: auto; text-align: left; margin-bottom: var(--space-xs); }
     .form-group input[type="time"], .form-group input[type="text"], .form-group input[type="number"] { width: 100%; }
     .admin-hint { bottom: var(--space-lg); padding: var(--space-xs) var(--space-md); font-size: 0.75rem; }
+    #parent-zone .form-group button { width: 100%; }
 }
 
 /* ===========================================
