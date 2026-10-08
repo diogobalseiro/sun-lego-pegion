@@ -98,7 +98,7 @@
 html, body {
     height: 100%;
     font-family: var(--font-sans);
-    background: var(--bg-space);
+    background-color: var(--bg-space);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -106,15 +106,21 @@ html, body {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    transition: background var(--transition-slow), color var(--transition-slow);
-    
-    /* Cosmic background pattern */
+    transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+html::before, body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
     background-image: 
         radial-gradient(ellipse at 20% 30%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at 50% 80%, rgba(140, 92, 246, 0.1) 0%, transparent 50%);
     background-size: 400px 400px, 300px 300px, 500px 500px;
     animation: cosmicDrift 60s linear infinite;
+    pointer-events: none;
+    z-index: -1;
 }
 
 @keyframes cosmicDrift {
@@ -375,7 +381,7 @@ header h1 {
 }
 
 .stat-card {
-    background: var(--bg-card);
+    background-color: var(--bg-card);
     border-radius: var(--radius-xl);
     padding: var(--space-lg);
     box-shadow: var(--shadow);
@@ -468,7 +474,7 @@ header h1 {
    REWARDS SHOP (Galaxy Cards)
    =========================================== */
 #rewards-shop {
-    background: var(--bg-card);
+    background-color: var(--bg-card);
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
     margin: var(--space-lg) 0;
@@ -509,7 +515,7 @@ header h1 {
 }
 
 .reward-card {
-    background: var(--bg-galaxy);
+    background-color: var(--bg-galaxy);
     border-radius: var(--radius-xl);
     padding: var(--space-lg);
     text-align: center;
@@ -633,7 +639,7 @@ header h1 {
    HISTORY
    =========================================== */
 #history {
-    background: var(--bg-card);
+    background-color: var(--bg-card);
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
     margin: var(--space-lg) 0;
@@ -696,7 +702,7 @@ header h1 {
 #parent-zone {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     padding: var(--space-xl);
     overflow-y: auto;
