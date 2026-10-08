@@ -10,8 +10,35 @@
  * - Track consecutive day streak
  */
 
-const VERSION = '1.0.0';
+const VERSION = '2.0.0';
 const STATE_KEY = 'elevatorTokenState';
+const THEME_KEY = 'elevatorTokenTheme';
+
+// ============================================
+// THEME MANAGEMENT
+// ============================================
+function loadTheme() {
+    try {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+        }
+    } catch (e) {}
+}
+
+function saveTheme(theme) {
+    try {
+        localStorage.setItem(THEME_KEY, theme);
+        document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {}
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'light' ? 'dark' : 'light';
+    saveTheme(next);
+    return next;
+}
 
 const defaultRewards = [
     { id: 1, name: '15 min a brincar extra', cost: 3 },
@@ -487,8 +514,25 @@ function setVersionBadge() {
     if (badge) badge.textContent = `v${VERSION}`;
 }
 
+// Initialize theme toggle button
+function initThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const theme = toggleTheme();
+            toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌓';
+        });
+        
+        // Set initial icon based on current theme
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        toggleBtn.textContent = current === 'dark' ? '☀️' : '🌓';
+    }
+}
+
 // START
 document.addEventListener('DOMContentLoaded', () => {
+    loadTheme();
     setVersionBadge();
     init();
+    initThemeToggle();
 });
