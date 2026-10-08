@@ -1,0 +1,484 @@
+/**
+ * Elevator Token Challenge (Desafio das Estrelas)
+ * Morning routine tracker for kids aged 6-8
+ * 
+ * Behavioral design principles:
+ * - Immediate, specific reinforcement
+ * - One token (estrela) per observable behavior
+ * - Small, achievable early rewards
+ * - No token removal
+ * - Track consecutive day streak
+ */
+
+const STATE_KEY = 'elevatorTokenState';
+
+const defaultRewards = [
+    { id: 1, name: '15 min a brincar extra', cost: 3 },
+    { id: 2, name: 'Escolher a sobremesa', cost: 5 },
+    { id: 3, name: 'Filme ao fim de semana', cost: 8 },
+    { id: 4, name: 'Brinquedo pequeno', cost: 15 }
+];
+
+const defaultState = {
+    deadline: '08:00',
+    totalEstrelas: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    rewards: [...defaultRewards],
+    punchHistory: [],
+    redemptionLog: [],
+    lastPunchDate: null
+};
+
+let state = { ...defaultState };
+
+// ============================================
+// LOCAL STORAGE
+// ============================================
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STATE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            state = { ...defaultState, ...parsed };
+            if (!state.rewards || state.rewards.length === 0) {
+                state.rewards = [...defaultRewards];
+            }
+            if (!state.punchHistory) state.punchHistory = [];
+            if (!state.redemptionLog) state.redemptionLog = [];
+        }
+    } catch (e) {
+        state = { ...defaultState };
+    }
+}
+
+function saveState() {
+    try {
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    } catch (e) {}
+}
+
+// ============================================
+// TIME UTILITIES
+// ============================================
+function getToday() {
+    return new Date().toISOString().split('T')[0];
+}
+
+function getCurrentTime() {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+}
+
+function timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+function formatDateForDisplay(dateStr) {
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+}
+
+// ============================================
+// CORE LOGIC
+// ============================================
+function checkDeadline(timeStr) {
+    const timeMinutes = timeToMinutes(timeStr);
+    const deadlineMinutes = timeToMinutes(state.deadline);
+    return timeMinutes <= deadlineMinutes;
+}
+
+function canPunchToday() {
+    const today = getToday();
+    const lastPunch = state.punchHistory.find(p => p.date === today);
+    return !lastPunch;
+}
+
+function punchIn(timeStr = null) {
+    const today = getToday();
+    const time = timeStr || getCurrentTime();
+    
+    if (!canPunchToday()) {
+        return { success: false, message: 'Já carimbaste hoje!' };
+    }
+    
+    const success = checkDeadline(time);
+    
+    state.punchHistory.push({ date: today, time: time, success: success });
+    state.lastPunchDate = today;
+    
+    if (success) {
+        state.totalEstrelas += 1;
+        
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayPunch = state.punchHistory.find(p => p.date === yesterdayStr && p.success);
+        
+        if (yesterdayPunch) {
+            state.currentStreak += 1;
+        } else {
+            state.currentStreak = 1;
+        }
+        
+        if (state.currentStreak > state.longestStreak) {
+            state.longestStreak = state.currentStreak;
+        }
+        
+        saveState();
+        return { success: true, message: `Conseguiiste! Chegaste às ${time} 🎉` };
+    } else {
+        state.currentStreak = 0;
+        saveState();
+        return { success: false, message: `Quase! Chegaste às ${time}, continua a tentar amanhã!` };
+    }
+}
+
+function tradeReward(rewardId) {
+    const reward = state.rewards.find(r => r.id === rewardId);
+    if (!reward) return { success: false, message: 'Prémio não encontrado' };
+    if (state.totalEstrelas < reward.cost) return { success: false, message: 'Não tens estrelas suficientes!' };
+    
+    state.totalEstrelas -= reward.cost;
+    state.redemptionLog.push({
+        date: getToday(),
+        rewardId: reward.id,
+        rewardName: reward.name,
+        cost: reward.cost
+    });
+    saveState();
+    return { success: true, message: `Parabéns! Ganhaste "${reward.name}"! 🎁` };
+}
+
+function clearTodayPunch() {
+    const today = getToday();
+    state.punchHistory = state.punchHistory.filter(p => p.date !== today);
+    saveState();
+    return { success: true, message: 'Hoje foi removido' };
+}
+
+function resetAll() {
+    if (confirm('Tens a certeza que queres reiniciar TUDO?')) {
+        state = { ...defaultState };
+        saveState();
+        return { success: true, message: 'Tudo foi reiniciado' };
+    }
+    return { success: false, message: 'Reinício cancelado' };
+}
+
+// ============================================
+// REWARDS MANAGEMENT
+// ============================================
+function addReward(name, cost) {
+    const id = state.rewards.length > 0 ? Math.max(...state.rewards.map(r => r.id)) + 1 : 1;
+    state.rewards.push({ id, name, cost: parseInt(cost) });
+    saveState();
+    return { success: true, reward: { id, name, cost: parseInt(cost) } };
+}
+
+function removeReward(rewardId) {
+    state.rewards = state.rewards.filter(r => r.id !== rewardId);
+    saveState();
+    return { success: true };
+}
+
+function setDeadline(time) {
+    state.deadline = time;
+    saveState();
+    return { success: true, deadline: time };
+}
+
+function manualPunch(time) {
+    return punchIn(time);
+}
+
+// ============================================
+// HISTORY
+// ============================================
+function getLast7Days() {
+    return state.punchHistory
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 7);
+}
+
+function getRecentRedemptions(limit = 10) {
+    return state.redemptionLog
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, limit);
+}
+
+// ============================================
+// RENDERING
+// ============================================
+function renderEstrelaCounter() {
+    document.getElementById('total-estrelas').textContent = state.totalEstrelas;
+}
+
+function renderStreakCounter() {
+    document.getElementById('current-streak').textContent = state.currentStreak;
+}
+
+function renderRewards() {
+    const container = document.getElementById('rewards-list');
+    container.innerHTML = '';
+    
+    state.rewards.forEach(reward => {
+        const canAfford = state.totalEstrelas >= reward.cost;
+        const card = document.createElement('div');
+        card.className = 'reward-card';
+        card.innerHTML = `
+            <div class="reward-name">${reward.name}</div>
+            <div class="reward-cost">${reward.cost} ⭐</div>
+            <button class="trade-btn" ${!canAfford ? 'disabled' : ''} data-id="${reward.id}">Trocar</button>
+        `;
+        container.appendChild(card);
+    });
+    
+    container.querySelectorAll('.trade-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const rewardId = parseInt(e.target.dataset.id);
+            const result = tradeReward(rewardId);
+            if (result.success) {
+                renderEstrelaCounter();
+                showFeedback(result.message);
+                renderRewards();
+            } else {
+                showFeedback(result.message, true);
+            }
+        });
+    });
+}
+
+function renderHistory() {
+    const tbody = document.getElementById('history-body');
+    const history = getLast7Days();
+    tbody.innerHTML = '';
+    
+    if (history.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = '<td colspan="3">Ainda sem histórico</td>';
+        tbody.appendChild(row);
+        return;
+    }
+    
+    history.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${formatDateForDisplay(entry.date)}</td>
+            <td>${entry.time}</td>
+            <td class="${entry.success ? 'result-success' : 'result-fail'}">
+                ${entry.success ? '✓ Consegui!' : '✗ Quase!'} 
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function renderParentZone() {
+    document.getElementById('deadline-input').value = state.deadline;
+    renderAdminRewards();
+    renderRedemptionLog();
+}
+
+function renderAdminRewards() {
+    const container = document.getElementById('reward-list-admin');
+    container.innerHTML = '';
+    
+    state.rewards.forEach(reward => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <div><strong>${reward.name}</strong> (${reward.cost} ⭐)</div>
+            <button class="remove-reward" data-id="${reward.id}">Remover</button>
+        `;
+        container.appendChild(li);
+    });
+    
+    container.querySelectorAll('.remove-reward').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const rewardId = parseInt(e.target.dataset.id);
+            removeReward(rewardId);
+            renderAdminRewards();
+            renderRewards();
+        });
+    });
+}
+
+function renderRedemptionLog() {
+    const container = document.getElementById('log-list');
+    const log = getRecentRedemptions();
+    container.innerHTML = '';
+    
+    if (log.length === 0) {
+        container.innerHTML = '<li>Nenhum registo de trocas</li>';
+        return;
+    }
+    
+    log.forEach(entry => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${formatDateForDisplay(entry.date)}</span>
+            <span>${entry.rewardName} (-${entry.cost} ⭐)</span>
+        `;
+        container.appendChild(li);
+    });
+}
+
+// ============================================
+// FEEDBACK & ANIMATIONS
+// ============================================
+function showFeedback(message, isError = false) {
+    const feedbackEl = document.getElementById('feedback');
+    const punchBtn = document.getElementById('punch-btn');
+    
+    feedbackEl.textContent = message;
+    feedbackEl.className = isError ? 'error' : '';
+    feedbackEl.classList.remove('hidden');
+    
+    if (!isError) {
+        punchBtn.classList.add('success');
+        for (let i = 0; i < 5; i++) createEstrelaAnimation();
+        setTimeout(() => punchBtn.classList.remove('success'), 1000);
+    }
+    
+    setTimeout(() => feedbackEl.classList.add('hidden'), 3000);
+}
+
+function createEstrelaAnimation() {
+    const estrela = document.createElement('div');
+    estrela.className = 'estrela-animation';
+    estrela.textContent = '★';
+    
+    const punchBtn = document.getElementById('punch-btn');
+    const rect = punchBtn.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    
+    document.body.appendChild(estrela);
+    estrela.style.left = `${startX}px`;
+    estrela.style.top = `${startY}px`;
+    estrela.style.transform = `translate(${Math.random() * 40 - 20}px, 0)`;
+    
+    setTimeout(() => estrela.remove(), 1500);
+}
+
+// ============================================
+// ADMIN ACCESS (Long Press)
+// ============================================
+let longPressTimer = null;
+const LONG_PRESS_DURATION = 1000;
+
+function startLongPress() {
+    longPressTimer = setTimeout(() => showParentZone(), LONG_PRESS_DURATION);
+}
+
+function cancelLongPress() {
+    if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+    }
+}
+
+function showParentZone() {
+    document.getElementById('parent-zone').classList.remove('hidden');
+    renderParentZone();
+}
+
+function hideParentZone() {
+    document.getElementById('parent-zone').classList.add('hidden');
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+function init() {
+    loadState();
+    
+    renderEstrelaCounter();
+    renderStreakCounter();
+    renderRewards();
+    renderHistory();
+    
+    // Punch button
+    const punchBtn = document.getElementById('punch-btn');
+    punchBtn.addEventListener('click', () => {
+        if (!canPunchToday()) {
+            showFeedback('Já carimbaste hoje!', true);
+            return;
+        }
+        const result = punchIn();
+        showFeedback(result.message, !result.success);
+        renderEstrelaCounter();
+        renderStreakCounter();
+        renderRewards();
+        renderHistory();
+    });
+    
+    // Long press for admin
+    punchBtn.addEventListener('mousedown', startLongPress);
+    punchBtn.addEventListener('mouseup', cancelLongPress);
+    punchBtn.addEventListener('mouseleave', cancelLongPress);
+    punchBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startLongPress(); });
+    punchBtn.addEventListener('touchend', (e) => { e.preventDefault(); cancelLongPress(); });
+    
+    // Parent zone
+    document.getElementById('close-parent').addEventListener('click', hideParentZone);
+    document.getElementById('save-deadline').addEventListener('click', () => {
+        const time = document.getElementById('deadline-input').value;
+        if (time) { setDeadline(time); showFeedback(`Hora limite guardada: ${time}`); }
+    });
+    document.getElementById('add-reward').addEventListener('click', () => {
+        const name = document.getElementById('reward-name').value;
+        const cost = document.getElementById('reward-cost').value;
+        if (name && cost && parseInt(cost) > 0) {
+            addReward(name, cost);
+            document.getElementById('reward-name').value = '';
+            document.getElementById('reward-cost').value = '';
+            renderAdminRewards();
+            renderRewards();
+            showFeedback('Prémio adicionado!');
+        }
+    });
+    document.getElementById('manual-punch').addEventListener('click', () => {
+        const time = document.getElementById('manual-time').value;
+        if (time) {
+            const result = manualPunch(time);
+            showFeedback(result.message, !result.success);
+            renderEstrelaCounter();
+            renderStreakCounter();
+            renderRewards();
+            renderHistory();
+            hideParentZone();
+        }
+    });
+    document.getElementById('clear-today').addEventListener('click', () => {
+        if (confirm('Tens a certeza que queres apagar o registo de hoje?')) {
+            clearTodayPunch();
+            renderHistory();
+            showFeedback('Hoje foi removido');
+        }
+    });
+    document.getElementById('reset-all').addEventListener('click', () => {
+        const result = resetAll();
+        if (result.success) {
+            renderEstrelaCounter();
+            renderStreakCounter();
+            renderRewards();
+            renderHistory();
+            hideParentZone();
+            showFeedback(result.message);
+        }
+    });
+    
+    updateGreeting();
+    setInterval(updateGreeting, 60000);
+}
+
+function updateGreeting() {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Bom dia!' : hour < 18 ? 'Boa tarde!' : 'Boa noite!';
+    document.getElementById('greeting').textContent = greeting;
+}
+
+// START
+document.addEventListener('DOMContentLoaded', init);

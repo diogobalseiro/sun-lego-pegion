@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes - Desafio das Estrelas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0F172A;
+            color: #E2E8F0;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { color: #4F46E5; margin-bottom: 30px; }
+        .test-section { background: #1E293B; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .test-section h2 { color: #F59E0B; margin-bottom: 15px; font-size: 1.1rem; }
+        .test-list { list-style: none; }
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-item.pass { background: rgba(16, 185, 129, 0.2); border-left: 4px solid #10B981; }
+        .test-item.fail { background: rgba(255, 90, 95, 0.2); border-left: 4px solid #FF5A5F; }
+        .test-item.skip { background: rgba(245, 158, 11, 0.2); border-left: 4px solid #F59E0B; }
+        .status-icon { font-size: 1.2rem; }
+        .test-name { flex: 1; }
+        .test-error { color: #FF5A5F; font-size: 0.9rem; margin-top: 5px; }
+        .summary {
+            background: #1E293B;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            display: flex;
+            gap: 40px;
+        }
+        .summary-item { text-align: center; }
+        .summary-count { font-size: 2rem; font-weight: bold; }
+        .summary-label { font-size: 0.9rem; color: #94A3B8; }
+        .summary-count.pass { color: #10B981; }
+        .summary-count.fail { color: #FF5A5F; }
+        .summary-count.skip { color: #F59E0B; }
+        button {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover { background: #4338CA; }
+        .loading { color: #F59E0B; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Testes Unitários - Desafio das Estrelas</h1>
+    <div id="test-container"><p class="loading">A carregar...</p></div>
+    <div id="summary" class="summary" style="display: none;">
+        <div class="summary-item">
+            <div class="summary-count pass" id="pass-count">0</div>
+            <div class="summary-label">Passaram</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-count fail" id="fail-count">0</div>
+            <div class="summary-label">Falharam</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-count skip" id="skip-count">0</div>
+            <div class="summary-label">Saltados</div>
+        </div>
+    </div>
+    <button id="run-tests">Executar Testes Novamente</button>
+    
+    <script src="../app.js"></script>
+    <script src="test-harness.js"></script>
+    <script src="deadline-tests.js"></script>
+    <script src="punch-tests.js"></script>
+    <script src="streak-tests.js"></script>
+    <script src="reward-tests.js"></script>
+    <script src="persistence-tests.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('run-tests').addEventListener('click', runAllTests);
+            runAllTests();
+        });
+    </script>
+</body>
+</html>
