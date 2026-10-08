@@ -12,34 +12,6 @@
 
 const VERSION = '3.0.0';
 const STATE_KEY = 'elevatorTokenState';
-const THEME_KEY = 'elevatorTokenTheme';
-
-// ============================================
-// THEME MANAGEMENT
-// ============================================
-function loadTheme() {
-    try {
-        const saved = localStorage.getItem(THEME_KEY);
-        if (saved) {
-            document.documentElement.setAttribute('data-theme', saved);
-        }
-    } catch (e) {}
-}
-
-function saveTheme(theme) {
-    try {
-        localStorage.setItem(THEME_KEY, theme);
-        document.documentElement.setAttribute('data-theme', theme);
-    } catch (e) {}
-}
-
-function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'light' ? 'dark' : 'light';
-    saveTheme(next);
-    return next;
-}
-
 const defaultRewards = [
     { id: 1, name: '15 min a brincar extra', cost: 3 },
     { id: 2, name: 'Escolher a sobremesa', cost: 5 },
@@ -394,13 +366,23 @@ function createEstrelaAnimation() {
 // ADMIN ACCESS (Long Press)
 // ============================================
 let longPressTimer = null;
+let isLongPressTriggered = false;
 const LONG_PRESS_DURATION = 1000;
 
 function startLongPress() {
-    longPressTimer = setTimeout(() => showParentZone(), LONG_PRESS_DURATION);
+    isLongPressTriggered = false;
+    const punchBtn = document.getElementById('punch-btn');
+    if (punchBtn) punchBtn.classList.add('pressing');
+    longPressTimer = setTimeout(() => {
+        isLongPressTriggered = true;
+        if (punchBtn) punchBtn.classList.remove('pressing');
+        showParentZone();
+    }, LONG_PRESS_DURATION);
 }
 
 function cancelLongPress() {
+    const punchBtn = document.getElementById('punch-btn');
+    if (punchBtn) punchBtn.classList.remove('pressing');
     if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
@@ -430,6 +412,10 @@ function init() {
     // Punch button
     const punchBtn = document.getElementById('punch-btn');
     punchBtn.addEventListener('click', () => {
+        if (isLongPressTriggered) {
+            isLongPressTriggered = false;
+            return;
+        }
         if (!canPunchToday()) {
             showFeedback('Já carimbaste hoje!', true);
             return;
@@ -442,12 +428,11 @@ function init() {
         renderHistory();
     });
     
-    // Long press for admin
-    punchBtn.addEventListener('mousedown', startLongPress);
-    punchBtn.addEventListener('mouseup', cancelLongPress);
+    // Long press & active tap visual response
+    punchBtn.addEventListener('pointerdown', startLongPress);
+    punchBtn.addEventListener('pointerup', cancelLongPress);
+    punchBtn.addEventListener('pointercancel', cancelLongPress);
     punchBtn.addEventListener('mouseleave', cancelLongPress);
-    punchBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startLongPress(); });
-    punchBtn.addEventListener('touchend', (e) => { e.preventDefault(); cancelLongPress(); });
     
     // Parent zone
     document.getElementById('close-parent').addEventListener('click', hideParentZone);
@@ -542,26 +527,9 @@ function createCosmicParticles() {
     }
 }
 
-// Initialize theme toggle button
-function initThemeToggle() {
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            const theme = toggleTheme();
-            toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌓';
-        });
-        
-        // Set initial icon based on current theme
-        const current = document.documentElement.getAttribute('data-theme') || 'light';
-        toggleBtn.textContent = current === 'dark' ? '☀️' : '🌓';
-    }
-}
-
 // START
 document.addEventListener('DOMContentLoaded', () => {
-    loadTheme();
     setVersionBadge();
     createCosmicParticles();
     init();
-    initThemeToggle();
 });
