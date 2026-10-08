@@ -10,6 +10,7 @@
  * - Track consecutive day streak
  */
 
+const VERSION = '1.0.0';
 const STATE_KEY = 'elevatorTokenState';
 
 const defaultRewards = [
@@ -480,5 +481,14 @@ function updateGreeting() {
     document.getElementById('greeting').textContent = greeting;
 }
 
+// Set version badge
+function setVersionBadge() {
+    const badge = document.getElementById('version-badge');
+    if (badge) badge.textContent = `v${VERSION}`;
+}
+
 // START
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    setVersionBadge();
+    init();
+});
