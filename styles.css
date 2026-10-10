@@ -121,25 +121,29 @@ html, body {
 }
 
 .page-overlay.failure {
-    background: rgba(239, 68, 68, 0.15);
-    animation: bgFailureFlash 1.8s ease-out;
+    background: rgba(239, 68, 68, 0.2);
+    animation: bgFailureFlash 1.5s ease-out;
 }
 
 .page-overlay.success {
-    background: rgba(255, 215, 0, 0.1);
-    animation: bgSuccessFlash 1.8s ease-out;
+    background: rgba(255, 215, 0, 0.2);
+    animation: bgSuccessFlash 1s ease-out;
 }
 
 @keyframes bgFailureFlash {
     0%, 100% { opacity: 0; }
-    30% { opacity: 1; }
-    100% { opacity: 0; }
+    20% { opacity: 0.8; }
+    40% { opacity: 0; }
+    60% { opacity: 0.6; }
+    80% { opacity: 0; }
 }
 
 @keyframes bgSuccessFlash {
     0%, 100% { opacity: 0; }
-    30% { opacity: 1; }
-    100% { opacity: 0; }
+    20% { opacity: 0.8; }
+    40% { opacity: 0; }
+    60% { opacity: 0.6; }
+    80% { opacity: 0; }
 }
 
 /* ===== COSMIC PARTICLES ===== */
@@ -242,7 +246,7 @@ header h1 {
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-    background: linear-gradient(135deg, #4338CA 0%, #6366F1 35%, #06B6D4 70%, #EC4899 100%);
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
     background-clip: padding-box;
     color: white;
     border: 4px solid rgba(255, 255, 255, 0.75);
@@ -252,12 +256,12 @@ header h1 {
     font-weight: 800;
     cursor: pointer;
     box-shadow: 
-        0 0 0 4px rgba(6, 182, 212, 0.45),
-        0 0 0 9px rgba(79, 70, 229, 0.25),
-        0 12px 28px rgba(79, 70, 229, 0.45),
-        0 0 40px rgba(6, 182, 212, 0.35),
-        inset 0 3px 6px rgba(255, 255, 255, 0.45),
-        inset 0 -4px 8px rgba(0, 0, 0, 0.3);
+        0 0 0 6px rgba(34, 197, 94, 0.75),
+        0 0 0 13px rgba(59, 130, 246, 0.45),
+        0 20px 45px rgba(37, 99, 235, 0.65),
+        0 0 65px rgba(34, 197, 94, 0.65),
+        inset 0 3px 8px rgba(255, 255, 255, 0.6),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.25);
     position: relative;
     min-width: 88px;
     min-height: 88px;
@@ -265,7 +269,7 @@ header h1 {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
-    transform: translateY(0) scale(1);
+    transform: translateY(-8px) scale(1.06);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 border-color 0.2s ease,
@@ -274,30 +278,41 @@ header h1 {
     z-index: 10;
 }
 
-/* Hover: springs up, expands glowing aura */
-#punch-btn:hover {
-    transform: translateY(-8px) scale(1.06);
-    border-color: rgba(255, 255, 255, 0.95);
+#punch-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
     box-shadow: 
-        0 0 0 6px rgba(6, 182, 212, 0.75),
-        0 0 0 13px rgba(236, 72, 153, 0.45),
-        0 20px 45px rgba(79, 70, 229, 0.65),
-        0 0 65px rgba(6, 182, 212, 0.65),
-        inset 0 3px 8px rgba(255, 255, 255, 0.6),
-        inset 0 -4px 8px rgba(0, 0, 0, 0.25);
+        0 0 0 4px rgba(34, 197, 94, 0.25),
+        0 0 0 9px rgba(59, 130, 246, 0.15),
+        0 4px 12px rgba(37, 99, 235, 0.25),
+        inset 0 3px 6px rgba(255, 255, 255, 0.3),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Tapping / Active: immediate spring squash down */
+/* Hover: subtle enhancement from default */
+#punch-btn:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+        0 0 0 8px rgba(34, 197, 94, 0.75),
+        0 0 0 16px rgba(59, 130, 246, 0.45),
+        0 25px 50px rgba(37, 99, 235, 0.75),
+        0 0 75px rgba(34, 197, 94, 0.75),
+        inset 0 3px 10px rgba(255, 255, 255, 0.7),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tapping / Active: subtle press without shrink */
 #punch-btn:active,
 #punch-btn.pressing {
-    transform: translateY(6px) scale(0.92) !important;
+    transform: translateY(2px) !important;
     transition: transform 0.06s cubic-bezier(0.2, 0, 0, 1),
                 box-shadow 0.06s cubic-bezier(0.2, 0, 0, 1) !important;
     box-shadow: 
-        0 0 0 3px rgba(6, 182, 212, 0.6),
-        0 0 0 6px rgba(79, 70, 229, 0.35),
-        0 4px 14px rgba(79, 70, 229, 0.5),
-        0 0 25px rgba(6, 182, 212, 0.4),
+        0 0 0 3px rgba(34, 197, 94, 0.6),
+        0 0 0 6px rgba(59, 130, 246, 0.35),
+        0 4px 14px rgba(37, 99, 235, 0.5),
+        0 0 25px rgba(34, 197, 94, 0.4),
         inset 0 6px 14px rgba(0, 0, 0, 0.45) !important;
 }
 
@@ -314,45 +329,77 @@ header h1 {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
 }
 
-#punch-btn:hover .punch-star-icon {
+.punch-star-icon {
     animation-duration: 4s;
     transform: scale(1.18);
-    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 1)) drop-shadow(0 0 32px rgba(255, 215, 0, 0.85));
+    filter: drop-shadow(0 0 16px rgba(34, 197, 94, 1)) drop-shadow(0 0 32px rgba(34, 197, 94, 0.85));
+}
+
+#punch-btn:hover:not(:disabled) .punch-star-icon {
+    animation-duration: 2s;
+    transform: scale(1.25);
+    filter: drop-shadow(0 0 20px rgba(34, 197, 94, 1)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.85));
 }
 
 #punch-btn:active .punch-star-icon,
 #punch-btn.pressing .punch-star-icon {
-    transform: scale(0.85);
+    transform: scale(0.98);
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
 }
 
 /* Success Celebration Pop */
 #punch-btn.success {
-    animation: successPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), cosmicBurst 1s ease, successFlare 1.5s ease-out;
+    animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), cosmicBurst 0.8s ease, successFlare 1s ease-out;
 }
 
 #punch-btn.success .punch-star-icon {
-    animation: estrelaSpin 2s linear infinite, starGlow 1.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.7));
+    animation: estrelaSpin 2s linear infinite, successStarPulse 0.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.8));
+    transform: scale(1.4);
+    color: #FFD700;
+    transition: all 0.3s ease;
+}
+
+@keyframes successStarPulse {
+    0%, 100% { 
+        transform: scale(1.4);
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.8));
+        color: #FFD700;
+    }
+    50% { 
+        transform: scale(1.6);
+        filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.8));
+        color: #FFFF00;
+    }
+}
+
+@keyframes starGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(34, 197, 94, 0.8); }
+    50% { text-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 20px rgba(34, 197, 94, 0.7); }
+}
+
+#punch-btn.failure .punch-star-icon {
+    animation: sadWobble 0.6s ease-in-out, failureStarPulse 1s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 1)) drop-shadow(0 0 40px rgba(239, 68, 68, 0.7));
+    color: #EF4444;
     transform: scale(1.3);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
 }
 
-@keyframes starGlow {
-    0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
-    50% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.7); }
-}
-
-#punch-btn.failure .punch-star-icon {
-    animation: sadWobble 0.6s ease-in-out;
-    filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));
-    color: var(--meteor-red);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
+@keyframes failureStarPulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 20px rgba(239, 68, 68, 1)) drop-shadow(0 0 40px rgba(239, 68, 68, 0.7));
+        color: #EF4444;
+    }
+    50% { 
+        filter: drop-shadow(0 0 30px rgba(239, 68, 68, 1)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.8));
+        color: #DC2626;
+    }
 }
 
 @keyframes sadWobble {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
+    0%, 100% { transform: rotate(-5deg) scale(1.3); }
+    50% { transform: rotate(5deg) scale(1.3); }
 }
 
 @keyframes successPop {
@@ -363,12 +410,12 @@ header h1 {
 }
 
 @keyframes cosmicBurst {
-    0% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); }
+    0% { box-shadow: var(--shadow-lg), var(--shadow-button); }
     50% { 
-        box-shadow: 0 0 60px var(--nebula-purple), 0 0 40px var(--cosmic-teal), 0 0 20px var(--galaxy-pink);
+        box-shadow: 0 0 60px #3B82F6, 0 0 40px #22C55E, 0 0 20px #1E40AF;
         filter: brightness(1.2);
     }
-    100% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); filter: brightness(1); }
+    100% { box-shadow: var(--shadow-lg), var(--shadow-button); filter: brightness(1); }
 }
 
 @keyframes successPop {
@@ -924,7 +971,7 @@ button[id^="manual"]:active {
    ESTRELA ANIMATION
    =========================================== */
 @keyframes estrelaFloat {
-    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7)); }
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.7)); }
     25% { transform: translate(-10px, -30px) rotate(45deg) scale(1.1); opacity: 0.9; }
     50% { transform: translate(-20px, -60px) rotate(90deg) scale(1.2); opacity: 0.8; }
     75% { transform: translate(-30px, -90px) rotate(135deg) scale(1.1); opacity: 0.6; }
@@ -934,11 +981,11 @@ button[id^="manual"]:active {
 .estrela-animation {
     position: absolute;
     font-size: clamp(1.25rem, 3vw, 1.75rem);
-    color: var(--supernova);
+    color: #22C55E;
     animation: estrelaFloat 1.5s ease-out forwards;
     pointer-events: none;
     z-index: 1100;
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.5));
 }
 
 /* ===========================================
@@ -974,20 +1021,23 @@ button[id^="manual"]:active {
     0% { 
         box-shadow: 
             0 0 0 0 rgba(255, 215, 0, 0.4),
-            0 0 0 0 rgba(6, 182, 212, 0.4);
-        background: linear-gradient(135deg, #4338CA 0%, #6366F1 35%, #06B6D4 70%, #EC4899 100%);
+            0 0 0 0 rgba(255, 215, 0, 0.3);
+        background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
+        filter: brightness(1);
     }
-    50% {
+    30% {
         box-shadow: 
-            0 0 0 30px rgba(255, 215, 0, 0),
-            0 0 0 60px rgba(6, 182, 212, 0);
-        background: linear-gradient(135deg, #FFD700 0%, #F59E0B 50%, #FFD700 100%);
+            0 0 0 40px rgba(255, 215, 0, 0.8),
+            0 0 0 80px rgba(255, 215, 0, 0.6);
+        background: linear-gradient(135deg, #FFD700 0%, #FFFF00 50%, #FFD700 100%);
+        filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
     }
     100% {
         box-shadow: 
             0 0 0 0 rgba(255, 215, 0, 0),
-            0 0 0 0 rgba(6, 182, 212, 0);
-        background: linear-gradient(135deg, #4338CA 0%, #6366F1 35%, #06B6D4 70%, #EC4899 100%);
+            0 0 0 0 rgba(255, 215, 0, 0);
+        background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
+        filter: brightness(1);
     }
 }
 
@@ -1017,18 +1067,24 @@ button[id^="manual"]:active {
 }
 
 #punch-btn.failure {
-    animation: failureColor 1.8s ease-out;
+    animation: successPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), cosmicBurst 1s ease, failureFlare 1.5s ease-out;
 }
 
 #punch-btn.failure::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.3);
     border-radius: 50%;
     pointer-events: none;
     opacity: 0;
-    animation: bgTint 1.8s ease-out;
+    animation: failureBgTint 1.5s ease-out;
+}
+
+@keyframes failureBgTint {
+    0%, 100% { opacity: 0; }
+    30% { opacity: 0.5; }
+    100% { opacity: 0; }
 }
 
 @keyframes bgTint {
@@ -1037,12 +1093,27 @@ button[id^="manual"]:active {
     100% { opacity: 0; }
 }
 
-@keyframes failureColor {
-    0%, 100% { 
-        filter: brightness(1) saturate(1);
+@keyframes failureFlare {
+    0% { 
+        box-shadow: 
+            0 0 0 0 rgba(239, 68, 68, 0.4),
+            0 0 0 0 rgba(239, 68, 68, 0.3);
+        background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
+        filter: brightness(1) hue-rotate(0deg) saturate(1);
     }
     50% {
-        filter: brightness(0.9) saturate(2) hue-rotate(-10deg);
+        box-shadow: 
+            0 0 0 30px rgba(239, 68, 68, 0.6),
+            0 0 0 60px rgba(239, 68, 68, 0.4);
+        background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
+        filter: brightness(1) hue-rotate(-10deg) saturate(1.5);
+    }
+    100% {
+        box-shadow: 
+            0 0 0 0 rgba(239, 68, 68, 0),
+            0 0 0 0 rgba(239, 68, 68, 0);
+        background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #22C55E 100%);
+        filter: brightness(1) hue-rotate(0deg) saturate(1);
     }
 }
 

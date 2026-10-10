@@ -10,7 +10,7 @@
  * - Track consecutive day streak
  */
 
-const VERSION = '5.0.0';
+const VERSION = '5.1.0';
 const STATE_KEY = 'elevatorTokenState';
 const defaultRewards = [
     { id: 1, name: '15 min a brincar extra', cost: 3 },
@@ -339,7 +339,27 @@ function animateButton(success) {
         // SUCCESS: Star awarded
         punchBtn.classList.add('success');
         
-        // Create multiple animations
+        // Create multiple animations with yellow colors for success
+        for (let i = 0; i < 8; i++) {
+            createEstrelaAnimation();
+            createConfetti();
+            createSparkle();
+        }
+        
+        // Additional yellow confetti for success
+        for (let i = 0; i < 10; i++) {
+            createYellowConfetti();
+        }
+        
+        setTimeout(() => {
+            punchBtn.classList.remove('success');
+            overlay.remove();
+        }, 1200);
+    } else {
+        // FAILURE: Star denied
+        punchBtn.classList.add('failure');
+        
+        // Create multiple animations like success
         for (let i = 0; i < 8; i++) {
             createEstrelaAnimation();
             createConfetti();
@@ -347,22 +367,9 @@ function animateButton(success) {
         }
         
         setTimeout(() => {
-            punchBtn.classList.remove('success');
-            overlay.remove();
-        }, 1500);
-    } else {
-        // FAILURE: Star denied
-        punchBtn.classList.add('failure');
-        
-        // Create sad particles
-        for (let i = 0; i < 5; i++) {
-            createSadParticle();
-        }
-        
-        setTimeout(() => {
             punchBtn.classList.remove('failure');
             overlay.remove();
-        }, 1800);
+        }, 1500);
     }
 }
 
@@ -380,6 +387,7 @@ function createEstrelaAnimation() {
     estrela.style.left = `${startX}px`;
     estrela.style.top = `${startY}px`;
     estrela.style.transform = `translate(${Math.random() * 40 - 20}px, 0)`;
+    estrela.style.color = '#22C55E';
     
     setTimeout(() => estrela.remove(), 1500);
 }
@@ -393,8 +401,8 @@ function createConfetti() {
     const startX = rect.left + rect.width / 2;
     const startY = rect.top + rect.height / 2;
     
-    // Random colors: gold, teal, purple, pink
-    const colors = ['#FFD700', '#06B6D4', '#4F46E5', '#EC4899', '#F59E0B'];
+    // Earth colors: blue, green, white
+    const colors = ['#3B82F6', '#22C55E', '#FFFFFF', '#1E40AF', '#10B981'];
     confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
     
     // Random size
@@ -412,6 +420,34 @@ function createConfetti() {
     setTimeout(() => confetti.remove(), 2500);
 }
 
+function createYellowConfetti() {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti-piece';
+    
+    const punchBtn = document.getElementById('punch-btn');
+    const rect = punchBtn.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    
+    // Yellow/gold colors for success flash
+    const colors = ['#FFD700', '#FFFF00', '#F59E0B', '#FBBF24', '#FCD34D'];
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Random size - slightly larger
+    const size = Math.random() * 8 + 5;
+    confetti.style.width = `${size}px`;
+    confetti.style.height = `${size}px`;
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    
+    document.body.appendChild(confetti);
+    confetti.style.left = `${startX + (Math.random() * 100 - 50)}px`;
+    confetti.style.top = `${startY}px`;
+    confetti.style.animationDelay = `${Math.random() * 0.3}s`;
+    confetti.style.animationDuration = `${Math.random() * 0.3 + 1}s`;
+    
+    setTimeout(() => confetti.remove(), 2000);
+}
+
 function createSparkle() {
     const sparkle = document.createElement('div');
     sparkle.className = 'sparkle';
@@ -427,26 +463,6 @@ function createSparkle() {
     sparkle.style.animationDelay = `${Math.random() * 0.3}s`;
     
     setTimeout(() => sparkle.remove(), 1500);
-}
-
-function createSadParticle() {
-    const particle = document.createElement('div');
-    particle.className = 'sad-particle';
-    particle.textContent = '☆';
-    
-    const punchBtn = document.getElementById('punch-btn');
-    const rect = punchBtn.getBoundingClientRect();
-    const startX = rect.left + rect.width / 2;
-    const startY = rect.top + rect.height / 2;
-    
-    document.body.appendChild(particle);
-    particle.style.left = `${startX + (Math.random() * 40 - 20)}px`;
-    particle.style.top = `${startY}px`;
-    particle.style.transform = `translate(0, 0) scale(${Math.random() * 0.5 + 0.5})`;
-    particle.style.animationDuration = `${Math.random() * 0.5 + 0.8}s`;
-    particle.style.animationDelay = `${Math.random() * 0.2}s`;
-    
-    setTimeout(() => particle.remove(), 1500);
 }
 
 // ============================================
@@ -498,6 +514,15 @@ function init() {
     
     // Punch button
     const punchBtn = document.getElementById('punch-btn');
+    
+    function updatePunchButtonState() {
+        if (!canPunchToday()) {
+            punchBtn.disabled = true;
+        } else {
+            punchBtn.disabled = false;
+        }
+    }
+    
     punchBtn.addEventListener('click', () => {
         if (isLongPressTriggered) {
             isLongPressTriggered = false;
@@ -513,7 +538,11 @@ function init() {
         renderStreakCounter();
         renderRewards();
         renderHistory();
+        updatePunchButtonState();
     });
+    
+    // Update button state on init
+    updatePunchButtonState();
     
     // Long press on version badge for parent mode
     const versionBadge = document.getElementById('version-badge');
