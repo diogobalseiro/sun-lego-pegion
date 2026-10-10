@@ -109,6 +109,39 @@ html, body {
     z-index: 1;
 }
 
+/* ===========================================
+   PAGE BACKGROUND ANIMATION OVERLAYS
+   =========================================== */
+.page-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+}
+
+.page-overlay.failure {
+    background: rgba(239, 68, 68, 0.15);
+    animation: bgFailureFlash 1.8s ease-out;
+}
+
+.page-overlay.success {
+    background: rgba(255, 215, 0, 0.1);
+    animation: bgSuccessFlash 1.8s ease-out;
+}
+
+@keyframes bgFailureFlash {
+    0%, 100% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes bgSuccessFlash {
+    0%, 100% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 /* ===== COSMIC PARTICLES ===== */
 .cosmic-particle {
     position: absolute;
@@ -183,6 +216,15 @@ header h1 {
     border: 1px solid rgba(6, 182, 212, 0.3);
     vertical-align: middle;
     margin-left: 0.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+    user-select: none;
+}
+
+.version-badge.pressing {
+    transform: scale(1.1);
+    background: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
 /* ===========================================
@@ -224,10 +266,12 @@ header h1 {
     user-select: none;
     -webkit-user-select: none;
     transform: translateY(0) scale(1);
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 border-color 0.2s ease,
-                filter 0.2s ease;
+                filter 0.2s ease,
+                background 0.8s ease;
+    z-index: 10;
 }
 
 /* Hover: springs up, expands glowing aura */
@@ -267,7 +311,7 @@ header h1 {
     display: inline-block;
     transform-origin: center center;
     pointer-events: none;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
 }
 
 #punch-btn:hover .punch-star-icon {
@@ -282,24 +326,33 @@ header h1 {
     filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
 }
 
-#punch-text {
-    font-size: clamp(1.1rem, 3.2vw, 1.4rem);
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    position: relative;
-    z-index: 2;
-    transition: transform 0.15s ease;
-}
-
-#punch-btn:active #punch-text,
-#punch-btn.pressing #punch-text {
-    transform: scale(0.96);
-}
-
 /* Success Celebration Pop */
 #punch-btn.success {
-    animation: successPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), cosmicBurst 1s ease;
+    animation: successPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), cosmicBurst 1s ease, successFlare 1.5s ease-out;
+}
+
+#punch-btn.success .punch-star-icon {
+    animation: estrelaSpin 2s linear infinite, starGlow 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.7));
+    transform: scale(1.3);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
+}
+
+@keyframes starGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
+    50% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.7); }
+}
+
+#punch-btn.failure .punch-star-icon {
+    animation: sadWobble 0.6s ease-in-out;
+    filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));
+    color: var(--meteor-red);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, color 0.3s ease;
+}
+
+@keyframes sadWobble {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
 }
 
 @keyframes successPop {
@@ -325,19 +378,6 @@ header h1 {
     100% { transform: scale(1); }
 }
 
-@keyframes cosmicBurst {
-    0% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); }
-    50% { 
-        box-shadow: 0 0 60px var(--nebula-purple), 0 0 40px var(--cosmic-teal), 0 0 20px var(--galaxy-pink);
-        filter: brightness(1.2);
-    }
-    100% { box-shadow: var(--shadow-lg), var(--shadow-button), var(--shadow-cosmic); filter: brightness(1); }
-}
-
-#punch-text {
-    position: relative;
-    z-index: 2;
-}
 
 #feedback {
     margin-top: var(--space-lg);
@@ -345,14 +385,7 @@ header h1 {
     font-weight: 700;
     color: var(--comet-green);
     min-height: 1.5em;
-    animation: feedbackPulse 0.3s ease;
     text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
-}
-
-@keyframes feedbackPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 #feedback.error {
@@ -880,30 +913,7 @@ button[id^="manual"]:active {
     color: var(--text-secondary);
 }
 
-/* ===========================================
-   ADMIN HINT
-   =========================================== */
-.admin-hint {
-    position: fixed;
-    bottom: var(--space-xl);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-card);
-    color: var(--text-secondary);
-    padding: var(--space-sm) var(--space-xl);
-    border-radius: var(--radius-full);
-    font-size: 0.85rem;
-    opacity: 0.7;
-    transition: var(--transition);
-    z-index: 10;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
 
-.admin-hint:hover {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.05);
-}
 
 /* ===========================================
    UTILITIES
@@ -932,6 +942,143 @@ button[id^="manual"]:active {
 }
 
 /* ===========================================
+   CONFETTI ANIMATION (Success)
+   =========================================== */
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--supernova);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1100;
+    opacity: 0;
+    animation: confettiFall 2s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(-50px) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(200px) rotate(720deg);
+    }
+}
+
+/* ===========================================
+   SUCCESS FLARE ANIMATION
+   =========================================== */
+@keyframes successFlare {
+    0% { 
+        box-shadow: 
+            0 0 0 0 rgba(255, 215, 0, 0.4),
+            0 0 0 0 rgba(6, 182, 212, 0.4);
+        background: linear-gradient(135deg, #4338CA 0%, #6366F1 35%, #06B6D4 70%, #EC4899 100%);
+    }
+    50% {
+        box-shadow: 
+            0 0 0 30px rgba(255, 215, 0, 0),
+            0 0 0 60px rgba(6, 182, 212, 0);
+        background: linear-gradient(135deg, #FFD700 0%, #F59E0B 50%, #FFD700 100%);
+    }
+    100% {
+        box-shadow: 
+            0 0 0 0 rgba(255, 215, 0, 0),
+            0 0 0 0 rgba(6, 182, 212, 0);
+        background: linear-gradient(135deg, #4338CA 0%, #6366F1 35%, #06B6D4 70%, #EC4899 100%);
+    }
+}
+
+/* ===========================================
+   FAILURE ANIMATIONS
+   =========================================== */
+
+@keyframes sadParticleFloat {
+    0% { 
+        transform: translate(0, 0) scale(1); 
+        opacity: 1;
+    }
+    100% { 
+        transform: translate(-30px, 30px) scale(0.5); 
+        opacity: 0;
+    }
+}
+
+.sad-particle {
+    position: absolute;
+    font-size: 1.2rem;
+    color: var(--meteor-red);
+    pointer-events: none;
+    z-index: 1100;
+    animation: sadParticleFloat 1s ease-out forwards;
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.7));
+}
+
+#punch-btn.failure {
+    animation: failureColor 1.8s ease-out;
+}
+
+#punch-btn.failure::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(239, 68, 68, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: bgTint 1.8s ease-out;
+}
+
+@keyframes bgTint {
+    0%, 100% { opacity: 0; }
+    30% { opacity: 0.7; }
+    100% { opacity: 0; }
+}
+
+@keyframes failureColor {
+    0%, 100% { 
+        filter: brightness(1) saturate(1);
+    }
+    50% {
+        filter: brightness(0.9) saturate(2) hue-rotate(-10deg);
+    }
+}
+
+
+
+/* ===========================================
+   SPARKLE PARTICLES (Success Enhancement)
+   =========================================== */
+.sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1100;
+    opacity: 0;
+    animation: sparkleAnim 1.5s ease-out forwards;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes sparkleAnim {
+    0% { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    50% { 
+        transform: scale(1.5) translateY(-20px);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(0.5) translateY(-40px);
+    }
+}
+
+/* ===========================================
    RESPONSIVE
    =========================================== */
 @media (max-width: 600px) {
@@ -950,7 +1097,6 @@ button[id^="manual"]:active {
     .form-group { flex-direction: column; align-items: stretch; }
     .form-group label { min-width: auto; text-align: left; margin-bottom: var(--space-xs); }
     .form-group input[type="time"], .form-group input[type="text"], .form-group input[type="number"] { width: 100%; }
-    .admin-hint { bottom: var(--space-lg); padding: var(--space-xs) var(--space-md); font-size: 0.75rem; }
     #parent-zone .form-group button { width: 100%; }
 }
 

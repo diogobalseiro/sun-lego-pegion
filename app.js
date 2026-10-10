@@ -10,7 +10,7 @@
  * - Track consecutive day streak
  */
 
-const VERSION = '3.0.0';
+const VERSION = '5.0.0';
 const STATE_KEY = 'elevatorTokenState';
 const defaultRewards = [
     { id: 1, name: '15 min a brincar extra', cost: 3 },
@@ -241,10 +241,7 @@ function renderRewards() {
             const result = tradeReward(rewardId);
             if (result.success) {
                 renderEstrelaCounter();
-                showFeedback(result.message);
                 renderRewards();
-            } else {
-                showFeedback(result.message, true);
             }
         });
     });
@@ -327,21 +324,46 @@ function renderRedemptionLog() {
 // ============================================
 // FEEDBACK & ANIMATIONS
 // ============================================
-function showFeedback(message, isError = false) {
-    const feedbackEl = document.getElementById('feedback');
+function animateButton(success) {
     const punchBtn = document.getElementById('punch-btn');
     
-    feedbackEl.textContent = message;
-    feedbackEl.className = isError ? 'error' : '';
-    feedbackEl.classList.remove('hidden');
+    // Clear any existing animation classes
+    punchBtn.classList.remove('success', 'failure');
     
-    if (!isError) {
+    // Create background overlay
+    const overlay = document.createElement('div');
+    overlay.className = `page-overlay ${success ? 'success' : 'failure'}`;
+    document.body.appendChild(overlay);
+    
+    if (success) {
+        // SUCCESS: Star awarded
         punchBtn.classList.add('success');
-        for (let i = 0; i < 5; i++) createEstrelaAnimation();
-        setTimeout(() => punchBtn.classList.remove('success'), 1000);
+        
+        // Create multiple animations
+        for (let i = 0; i < 8; i++) {
+            createEstrelaAnimation();
+            createConfetti();
+            createSparkle();
+        }
+        
+        setTimeout(() => {
+            punchBtn.classList.remove('success');
+            overlay.remove();
+        }, 1500);
+    } else {
+        // FAILURE: Star denied
+        punchBtn.classList.add('failure');
+        
+        // Create sad particles
+        for (let i = 0; i < 5; i++) {
+            createSadParticle();
+        }
+        
+        setTimeout(() => {
+            punchBtn.classList.remove('failure');
+            overlay.remove();
+        }, 1800);
     }
-    
-    setTimeout(() => feedbackEl.classList.add('hidden'), 3000);
 }
 
 function createEstrelaAnimation() {
@@ -362,6 +384,71 @@ function createEstrelaAnimation() {
     setTimeout(() => estrela.remove(), 1500);
 }
 
+function createConfetti() {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti-piece';
+    
+    const punchBtn = document.getElementById('punch-btn');
+    const rect = punchBtn.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    
+    // Random colors: gold, teal, purple, pink
+    const colors = ['#FFD700', '#06B6D4', '#4F46E5', '#EC4899', '#F59E0B'];
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Random size
+    const size = Math.random() * 6 + 4;
+    confetti.style.width = `${size}px`;
+    confetti.style.height = `${size}px`;
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    
+    document.body.appendChild(confetti);
+    confetti.style.left = `${startX + (Math.random() * 80 - 40)}px`;
+    confetti.style.top = `${startY}px`;
+    confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+    confetti.style.animationDuration = `${Math.random() * 0.5 + 1.5}s`;
+    
+    setTimeout(() => confetti.remove(), 2500);
+}
+
+function createSparkle() {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    
+    const punchBtn = document.getElementById('punch-btn');
+    const rect = punchBtn.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    
+    document.body.appendChild(sparkle);
+    sparkle.style.left = `${startX + (Math.random() * 60 - 30)}px`;
+    sparkle.style.top = `${startY}px`;
+    sparkle.style.animationDelay = `${Math.random() * 0.3}s`;
+    
+    setTimeout(() => sparkle.remove(), 1500);
+}
+
+function createSadParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'sad-particle';
+    particle.textContent = '☆';
+    
+    const punchBtn = document.getElementById('punch-btn');
+    const rect = punchBtn.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    
+    document.body.appendChild(particle);
+    particle.style.left = `${startX + (Math.random() * 40 - 20)}px`;
+    particle.style.top = `${startY}px`;
+    particle.style.transform = `translate(0, 0) scale(${Math.random() * 0.5 + 0.5})`;
+    particle.style.animationDuration = `${Math.random() * 0.5 + 0.8}s`;
+    particle.style.animationDelay = `${Math.random() * 0.2}s`;
+    
+    setTimeout(() => particle.remove(), 1500);
+}
+
 // ============================================
 // ADMIN ACCESS (Long Press)
 // ============================================
@@ -371,18 +458,18 @@ const LONG_PRESS_DURATION = 1000;
 
 function startLongPress() {
     isLongPressTriggered = false;
-    const punchBtn = document.getElementById('punch-btn');
-    if (punchBtn) punchBtn.classList.add('pressing');
+    const versionBadge = document.getElementById('version-badge');
+    if (versionBadge) versionBadge.classList.add('pressing');
     longPressTimer = setTimeout(() => {
         isLongPressTriggered = true;
-        if (punchBtn) punchBtn.classList.remove('pressing');
+        if (versionBadge) versionBadge.classList.remove('pressing');
         showParentZone();
     }, LONG_PRESS_DURATION);
 }
 
 function cancelLongPress() {
-    const punchBtn = document.getElementById('punch-btn');
-    if (punchBtn) punchBtn.classList.remove('pressing');
+    const versionBadge = document.getElementById('version-badge');
+    if (versionBadge) versionBadge.classList.remove('pressing');
     if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
@@ -417,28 +504,33 @@ function init() {
             return;
         }
         if (!canPunchToday()) {
-            showFeedback('Já carimbaste hoje!', true);
+            animateButton(false);
             return;
         }
         const result = punchIn();
-        showFeedback(result.message, !result.success);
+        animateButton(result.success);
         renderEstrelaCounter();
         renderStreakCounter();
         renderRewards();
         renderHistory();
     });
     
-    // Long press & active tap visual response
-    punchBtn.addEventListener('pointerdown', startLongPress);
-    punchBtn.addEventListener('pointerup', cancelLongPress);
-    punchBtn.addEventListener('pointercancel', cancelLongPress);
-    punchBtn.addEventListener('mouseleave', cancelLongPress);
+    // Long press on version badge for parent mode
+    const versionBadge = document.getElementById('version-badge');
+    if (versionBadge) {
+        versionBadge.addEventListener('pointerdown', startLongPress);
+        versionBadge.addEventListener('pointerup', cancelLongPress);
+        versionBadge.addEventListener('pointercancel', cancelLongPress);
+        versionBadge.addEventListener('mouseleave', cancelLongPress);
+        versionBadge.style.cursor = 'pointer';
+        versionBadge.style.userSelect = 'none';
+    }
     
     // Parent zone
     document.getElementById('close-parent').addEventListener('click', hideParentZone);
     document.getElementById('save-deadline').addEventListener('click', () => {
         const time = document.getElementById('deadline-input').value;
-        if (time) { setDeadline(time); showFeedback(`Hora limite guardada: ${time}`); }
+        if (time) { setDeadline(time); }
     });
     document.getElementById('add-reward').addEventListener('click', () => {
         const name = document.getElementById('reward-name').value;
@@ -449,14 +541,12 @@ function init() {
             document.getElementById('reward-cost').value = '';
             renderAdminRewards();
             renderRewards();
-            showFeedback('Prémio adicionado!');
         }
     });
     document.getElementById('manual-punch').addEventListener('click', () => {
         const time = document.getElementById('manual-time').value;
         if (time) {
-            const result = manualPunch(time);
-            showFeedback(result.message, !result.success);
+            manualPunch(time);
             renderEstrelaCounter();
             renderStreakCounter();
             renderRewards();
@@ -468,7 +558,6 @@ function init() {
         if (confirm('Tens a certeza que queres apagar o registo de hoje?')) {
             clearTodayPunch();
             renderHistory();
-            showFeedback('Hoje foi removido');
         }
     });
     document.getElementById('reset-all').addEventListener('click', () => {
@@ -479,7 +568,6 @@ function init() {
             renderRewards();
             renderHistory();
             hideParentZone();
-            showFeedback(result.message);
         }
     });
     
