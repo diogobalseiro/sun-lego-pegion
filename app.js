@@ -194,6 +194,27 @@ function manualPunch(time) {
 }
 
 // ============================================
+// STATE EDITING
+// ============================================
+function setEstrelas(count) {
+    state.totalEstrelas = parseInt(count) || 0;
+    saveState();
+    return { success: true, totalEstrelas: state.totalEstrelas };
+}
+
+function setCurrentStreak(count) {
+    state.currentStreak = parseInt(count) || 0;
+    saveState();
+    return { success: true, currentStreak: state.currentStreak };
+}
+
+function setLongestStreak(count) {
+    state.longestStreak = parseInt(count) || 0;
+    saveState();
+    return { success: true, longestStreak: state.longestStreak };
+}
+
+// ============================================
 // HISTORY
 // ============================================
 function getLast7Days() {
@@ -274,6 +295,9 @@ function renderHistory() {
 
 function renderParentZone() {
     document.getElementById('deadline-input').value = state.deadline;
+    document.getElementById('estrela-input').value = state.totalEstrelas;
+    document.getElementById('streak-input').value = state.currentStreak;
+    document.getElementById('longest-streak-input').value = state.longestStreak;
     renderAdminRewards();
     renderRedemptionLog();
 }
@@ -523,7 +547,27 @@ function init() {
         }
     }
     
-    punchBtn.addEventListener('click', () => {
+    // Touch support for better responsiveness
+    let touchStartTime = 0;
+    const TAP_MAX_DURATION = 300; // ms - to distinguish tap from long press
+    
+    punchBtn.addEventListener('click', handlePunch);
+    
+    // Touch events for mobile
+    punchBtn.addEventListener('touchstart', (e) => {
+        touchStartTime = Date.now();
+        e.preventDefault(); // Prevent default touch behavior
+    }, { passive: false });
+    
+    punchBtn.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - touchStartTime;
+        if (touchDuration <= TAP_MAX_DURATION) {
+            e.preventDefault(); // Prevent default touch behavior
+            handlePunch();
+        }
+    }, { passive: false });
+    
+    function handlePunch() {
         if (isLongPressTriggered) {
             isLongPressTriggered = false;
             return;
@@ -539,7 +583,7 @@ function init() {
         renderRewards();
         renderHistory();
         updatePunchButtonState();
-    });
+    }
     
     // Update button state on init
     updatePunchButtonState();
@@ -559,7 +603,34 @@ function init() {
     document.getElementById('close-parent').addEventListener('click', hideParentZone);
     document.getElementById('save-deadline').addEventListener('click', () => {
         const time = document.getElementById('deadline-input').value;
-        if (time) { setDeadline(time); }
+        if (time) {
+            setDeadline(time);
+            updatePunchButtonState();
+        }
+    });
+    document.getElementById('save-estrelas').addEventListener('click', () => {
+        const count = document.getElementById('estrela-input').value;
+        if (count !== '') {
+            setEstrelas(count);
+            renderEstrelaCounter();
+            renderRewards();
+            updatePunchButtonState();
+        }
+    });
+    document.getElementById('save-streak').addEventListener('click', () => {
+        const count = document.getElementById('streak-input').value;
+        if (count !== '') {
+            setCurrentStreak(count);
+            renderStreakCounter();
+            updatePunchButtonState();
+        }
+    });
+    document.getElementById('save-longest-streak').addEventListener('click', () => {
+        const count = document.getElementById('longest-streak-input').value;
+        if (count !== '') {
+            setLongestStreak(count);
+            renderParentZone();
+        }
     });
     document.getElementById('add-reward').addEventListener('click', () => {
         const name = document.getElementById('reward-name').value;
@@ -580,6 +651,8 @@ function init() {
             renderStreakCounter();
             renderRewards();
             renderHistory();
+            updatePunchButtonState();
+            renderParentZone();
             hideParentZone();
         }
     });
@@ -587,6 +660,7 @@ function init() {
         if (confirm('Tens a certeza que queres apagar o registo de hoje?')) {
             clearTodayPunch();
             renderHistory();
+            updatePunchButtonState();
         }
     });
     document.getElementById('reset-all').addEventListener('click', () => {
@@ -596,6 +670,7 @@ function init() {
             renderStreakCounter();
             renderRewards();
             renderHistory();
+            updatePunchButtonState();
             hideParentZone();
         }
     });
