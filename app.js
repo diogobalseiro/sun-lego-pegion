@@ -10,7 +10,7 @@
  * - Track consecutive day streak
  */
 
-const VERSION = '5.1.0';
+const VERSION = '5.2.0';
 const STATE_KEY = 'elevatorTokenState';
 const defaultRewards = [
     { id: 1, name: '15 min a brincar extra', cost: 3 },
